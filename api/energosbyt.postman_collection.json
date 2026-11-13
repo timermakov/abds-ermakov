@@ -1,0 +1,204 @@
+{
+	"info": {
+		"_postman_id": "b3f4c2e1-7a8d-4e5f-9c0a-1d2e3f4a5b6c",
+		"name": "EnergoSbyt Lab 1",
+		"description": "HTTP API of the EnergoSbyt service. Set the {{base_url}} and {{realty_id}}, {{user_id}}, {{gauge_id}}, {{tariff_id}} variables to your loaded dataset values.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{"key": "base_url", "value": "http://localhost:8080"},
+		{"key": "realty_id", "value": "1"},
+		{"key": "user_id", "value": "1"},
+		{"key": "gauge_id", "value": "1"},
+		{"key": "new_gauge_id", "value": "2"},
+		{"key": "tariff_id", "value": "1"}
+	],
+	"item": [
+		{
+			"name": "Ping",
+			"request": {
+				"method": "GET",
+				"url": "{{base_url}}/ping",
+				"description": "Returns 200 OK with an empty body."
+			}
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get user",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/users/{{user_id}}"
+					}
+				},
+				{
+					"name": "Get missing user",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/users/999999999"
+					}
+				},
+				{
+					"name": "Patch user fio (SCD 1)",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"fio\": \"Петрова Анна Сергеевна\"}"},
+						"url": "{{base_url}}/users/{{user_id}}",
+						"description": "Overwrites the full name, the previous value is not kept. Returns 204 with an empty body."
+					}
+				},
+				{
+					"name": "Patch user phone (SCD 3)",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"phone\": \"+79111111111\"}"},
+						"url": "{{base_url}}/users/{{user_id}}",
+						"description": "Moves the current phone into phone_prev and sets the new one."
+					}
+				},
+				{
+					"name": "Patch user without fields",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{}"},
+						"url": "{{base_url}}/users/{{user_id}}",
+						"description": "Returns 400: at least one field is required."
+					}
+				}
+			]
+		},
+		{
+			"name": "Realty",
+			"item": [
+				{
+					"name": "Get realty",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/realty/{{realty_id}}"
+					}
+				},
+				{
+					"name": "Get missing realty",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/realty/999999999"
+					}
+				}
+			]
+		},
+		{
+			"name": "Readings",
+			"item": [
+				{
+					"name": "Post reading",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"user_id\": {{user_id}}, \"gauge_id\": {{gauge_id}}, \"tariff_id\": {{tariff_id}}, \"reading_date\": \"2026-10-01\", \"day_kw\": 1250, \"night_kw\": 300}"},
+						"url": "{{base_url}}/realty/{{realty_id}}/readings",
+						"description": "Returns 201 with an empty body. A repeated post for the same date is a correction: a new row with a later created_at wins, the old row stays."
+					}
+				},
+				{
+					"name": "Post reading for missing realty",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"user_id\": 1, \"gauge_id\": 1, \"tariff_id\": 1, \"reading_date\": \"2026-10-01\", \"day_kw\": 1250, \"night_kw\": 300}"},
+						"url": "{{base_url}}/realty/999999999/readings"
+					}
+				},
+				{
+					"name": "List readings for period",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/realty/{{realty_id}}/readings?date_from=2026-10-01&date_to=2026-10-31",
+						"description": "Inclusive bounds. One actual value per date with corrections applied."
+					}
+				},
+				{
+					"name": "List readings with invalid date",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/realty/{{realty_id}}/readings?date_from=not-a-date&date_to=2026-10-31"
+					}
+				}
+			]
+		},
+		{
+			"name": "Invoices",
+			"item": [
+				{
+					"name": "List invoices",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/realty/{{realty_id}}/invoices?limit=10&offset=0",
+						"description": "Sorted by created_at descending. count is the total number of invoices of the object."
+					}
+				},
+				{
+					"name": "List invoices negative limit",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/realty/{{realty_id}}/invoices?limit=-1&offset=0"
+					}
+				}
+			]
+		},
+		{
+			"name": "Tariffs",
+			"item": [
+				{
+					"name": "Tariff on date",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/tariffs?date=2026-10-27",
+						"description": "Returns the version in force on the date: valid_from <= date < valid_to."
+					}
+				},
+				{
+					"name": "Tariff without date",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/tariffs"
+					}
+				},
+				{
+					"name": "Tariff before every version",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/tariffs?date=1900-01-01"
+					}
+				}
+			]
+		},
+		{
+			"name": "Gauges",
+			"item": [
+				{
+					"name": "Install gauge",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\"gauge_id\": {{new_gauge_id}}}"},
+						"url": "{{base_url}}/realty/{{realty_id}}/gauges",
+						"description": "Cancels the active binding (sign = -1, same version) and installs the gauge with version + 1. Returns 201 with an empty body."
+					}
+				},
+				{
+					"name": "Install gauge without id",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{}"},
+						"url": "{{base_url}}/realty/{{realty_id}}/gauges"
+					}
+				}
+			]
+		}
+	]
+}
