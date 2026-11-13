@@ -14,5 +14,6 @@ func New(_ config.Config, db *sql.DB) http.Handler {
 	mux.HandleFunc("GET /ping", ping.Handler)
 	registerUsers(mux, db)
 	registerRealty(mux, db)
+	registerReadings(mux, db)
 	return httpx.Recover(mux)
 }
