@@ -15,5 +15,6 @@ func New(_ config.Config, db *sql.DB) http.Handler {
 	registerUsers(mux, db)
 	registerRealty(mux, db)
 	registerReadings(mux, db)
+	registerInvoices(mux, db)
 	return httpx.Recover(mux)
 }
