@@ -16,5 +16,6 @@ func New(_ config.Config, db *sql.DB) http.Handler {
 	registerRealty(mux, db)
 	registerReadings(mux, db)
 	registerInvoices(mux, db)
+	registerTariffs(mux, db)
 	return httpx.Recover(mux)
 }
