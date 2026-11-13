@@ -71,7 +71,6 @@ volume/
 *.out
 go.work
 go.work.sum
-vendor/
 
 # Java
 *.class

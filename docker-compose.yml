@@ -22,3 +22,22 @@ services:
       timeout: 3s
       retries: 10
       start_period: 5s
+
+  app:
+    build:
+      context: .
+    environment:
+      APP_PORT: ${APP_PORT}
+      APP_CLICKHOUSE_RETRIES: ${APP_CLICKHOUSE_RETRIES}
+      APP_CLICKHOUSE_RETRY_DELAY_SEC: ${APP_CLICKHOUSE_RETRY_DELAY_SEC}
+      APP_CLICKHOUSE_PING_TIMEOUT_SEC: ${APP_CLICKHOUSE_PING_TIMEOUT_SEC}
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_PORT: ${CLICKHOUSE_PORT}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DATABASE: ${CLICKHOUSE_DATABASE}
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    depends_on:
+      clickhouse:
+        condition: service_healthy

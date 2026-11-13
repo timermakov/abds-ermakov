@@ -1,0 +1,17 @@
+.git
+.github
+api
+data
+gen
+scripts
+schema
+volume
+.env.local
+.gitattributes
+.gitignore
+CHANGELOG.md
+CODEOWNERS
+CONTRIBUTING.md
+Makefile
+README.md
+docker-compose.yml
