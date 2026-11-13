@@ -8,15 +8,15 @@ import (
 )
 
 const (
-	keyAppPort                = "APP_PORT"
-	keyClickHouseHost         = "CLICKHOUSE_HOST"
-	keyClickHousePort         = "CLICKHOUSE_PORT"
-	keyClickHouseUser         = "CLICKHOUSE_USER"
-	keyClickHousePassword     = "CLICKHOUSE_PASSWORD"
-	keyClickHouseDatabase     = "CLICKHOUSE_DATABASE"
-	keyConnectRetries         = "APP_CLICKHOUSE_RETRIES"
-	keyConnectRetryDelaySec   = "APP_CLICKHOUSE_RETRY_DELAY_SEC"
-	keyConnectPingTimeoutSec  = "APP_CLICKHOUSE_PING_TIMEOUT_SEC"
+	keyAppPort               = "APP_PORT"
+	keyClickHouseHost        = "CLICKHOUSE_HOST"
+	keyClickHousePort        = "CLICKHOUSE_PORT"
+	keyClickHouseUser        = "CLICKHOUSE_USER"
+	keyClickHousePassword    = "CLICKHOUSE_PASSWORD"
+	keyClickHouseDatabase    = "CLICKHOUSE_DATABASE"
+	keyConnectRetries        = "APP_CLICKHOUSE_RETRIES"
+	keyConnectRetryDelaySec  = "APP_CLICKHOUSE_RETRY_DELAY_SEC"
+	keyConnectPingTimeoutSec = "APP_CLICKHOUSE_PING_TIMEOUT_SEC"
 )
 
 type Config struct {

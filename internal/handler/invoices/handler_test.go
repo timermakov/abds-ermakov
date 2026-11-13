@@ -13,10 +13,10 @@ import (
 )
 
 type fakeProvider struct {
-	items []model.Invoice
-	count int64
-	err   error
-	calls int
+	items      []model.Invoice
+	count      int64
+	err        error
+	calls      int
 	lastLimit  int64
 	lastOffset int64
 }

@@ -9,12 +9,12 @@ import (
 
 func baseUser() model.User {
 	return model.User{
-		ID:         1,
-		FIO:        "Иванов Иван Иванович",
-		Phone:      "+79000000001",
-		PhonePrev:  "",
-		CreatedAt:  time.Date(2023, 11, 1, 9, 0, 0, 0, time.UTC),
-		UpdatedAt:  time.Date(2023, 11, 1, 9, 0, 0, 0, time.UTC),
+		ID:        1,
+		FIO:       "Иванов Иван Иванович",
+		Phone:     "+79000000001",
+		PhonePrev: "",
+		CreatedAt: time.Date(2023, 11, 1, 9, 0, 0, 0, time.UTC),
+		UpdatedAt: time.Date(2023, 11, 1, 9, 0, 0, 0, time.UTC),
 	}
 }
 

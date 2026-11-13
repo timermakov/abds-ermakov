@@ -3,12 +3,12 @@ package model
 import "time"
 
 type User struct {
-	ID         uint64
-	FIO        string
-	Phone      string
-	PhonePrev  string
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID        uint64
+	FIO       string
+	Phone     string
+	PhonePrev string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type UserPatch struct {

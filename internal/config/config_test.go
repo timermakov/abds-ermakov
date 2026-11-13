@@ -7,15 +7,15 @@ import (
 func TestLoad(t *testing.T) {
 	lookup := func(key string) (string, bool) {
 		values := map[string]string{
-			"APP_PORT":                         "8080",
-			"CLICKHOUSE_HOST":                  "localhost",
-			"CLICKHOUSE_PORT":                  "9000",
-			"CLICKHOUSE_USER":                  "default",
-			"CLICKHOUSE_PASSWORD":              "secret",
-			"CLICKHOUSE_DATABASE":              "energosbyt",
-			"APP_CLICKHOUSE_RETRIES":           "10",
-			"APP_CLICKHOUSE_RETRY_DELAY_SEC":   "1",
-			"APP_CLICKHOUSE_PING_TIMEOUT_SEC":  "5",
+			"APP_PORT":                        "8080",
+			"CLICKHOUSE_HOST":                 "localhost",
+			"CLICKHOUSE_PORT":                 "9000",
+			"CLICKHOUSE_USER":                 "default",
+			"CLICKHOUSE_PASSWORD":             "secret",
+			"CLICKHOUSE_DATABASE":             "energosbyt",
+			"APP_CLICKHOUSE_RETRIES":          "10",
+			"APP_CLICKHOUSE_RETRY_DELAY_SEC":  "1",
+			"APP_CLICKHOUSE_PING_TIMEOUT_SEC": "5",
 		}
 		value, ok := values[key]
 		return value, ok
