@@ -210,7 +210,10 @@ SELECT count() FROM energosbyt.fact_meter_readings WHERE realty_id = 1 AND creat
 
 ## Идемпотентность загрузки
 
-Повторный `make load` без `make teardown` не создаёт дубли в
+`make setup` пересоздаёт схему с нуля (`DROP DATABASE` → `CREATE DATABASE` → таблицы),
+поэтому его можно запускать повторно без `make teardown`: дубли не появляются.
+
+Повторный `make load` без пересоздания схемы не создаёт дубли в
 `dim_tariffs`, `dim_users` и `fact_meter_readings`: повторная вставка тех же строк
 дает те же значения ключа и версии, `ReplacingMergeTree` схлопывает их при `FINAL`.
 Для `dim_realty`, `dim_gauges`, `fact_invoice` (`MergeTree`) и
