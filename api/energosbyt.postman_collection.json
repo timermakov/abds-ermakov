@@ -2,24 +2,79 @@
 	"info": {
 		"_postman_id": "b3f4c2e1-7a8d-4e5f-9c0a-1d2e3f4a5b6c",
 		"name": "EnergoSbyt Lab 1",
-		"description": "HTTP API of the EnergoSbyt service. Set the {{base_url}} and {{realty_id}}, {{user_id}}, {{gauge_id}}, {{tariff_id}} variables to your loaded dataset values.",
+		"description": "HTTP API of the EnergoSbyt service. Each request has response examples (the Examples tab): write endpoints answer 201/204 with an EMPTY body by design, errors answer with a JSON message.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
-		{"key": "base_url", "value": "http://localhost:8080"},
-		{"key": "realty_id", "value": "1"},
-		{"key": "user_id", "value": "1"},
-		{"key": "gauge_id", "value": "1"},
-		{"key": "new_gauge_id", "value": "2"},
-		{"key": "tariff_id", "value": "1"}
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "realty_id",
+			"value": "1"
+		},
+		{
+			"key": "user_id",
+			"value": "1"
+		},
+		{
+			"key": "gauge_id",
+			"value": "1"
+		},
+		{
+			"key": "new_gauge_id",
+			"value": "2"
+		},
+		{
+			"key": "tariff_id",
+			"value": "1"
+		}
 	],
 	"item": [
 		{
 			"name": "Ping",
 			"request": {
 				"method": "GET",
-				"url": "{{base_url}}/ping",
-				"description": "Returns 200 OK with an empty body."
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/ping",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"ping"
+					]
+				},
+				"description": "Returns 200 OK with an empty body.",
+				"response": [
+					{
+						"name": "200 OK",
+						"originalRequest": {
+							"method": "GET",
+							"url": {
+								"raw": "{{base_url}}/ping",
+								"host": [
+									"{{base_url}}"
+								],
+								"path": [
+									"ping"
+								]
+							}
+						},
+						"status": "OK",
+						"code": 200,
+						"_postman_previewlanguage": "text",
+						"header": [
+							{
+								"key": "Content-Length",
+								"value": "0"
+							}
+						],
+						"cookie": [],
+						"body": ""
+					}
+				]
 			}
 		},
 		{
@@ -29,44 +84,344 @@
 					"name": "Get user",
 					"request": {
 						"method": "GET",
-						"url": "{{base_url}}/users/{{user_id}}"
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": null,
+						"response": [
+							{
+								"name": "200 OK",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/users/{{user_id}}",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"users",
+											"{{user_id}}"
+										]
+									}
+								},
+								"status": "OK",
+								"code": 200,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"id\": 1,\n    \"fio\": \"Иванов Иван Иванович\",\n    \"phone\": \"+79000000001\",\n    \"phone_prev\": \"\"\n}"
+							},
+							{
+								"name": "404 Not Found",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/users/999999999",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"users",
+											"999999999"
+										]
+									}
+								},
+								"status": "Not Found",
+								"code": 404,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"Not found\"\n}"
+							}
+						]
 					}
 				},
 				{
-					"name": "Get missing user",
-					"request": {
-						"method": "GET",
-						"url": "{{base_url}}/users/999999999"
-					}
-				},
-				{
-					"name": "Patch user fio (SCD 1)",
+					"name": "Patch fio (SCD 1)",
 					"request": {
 						"method": "PATCH",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
-						"body": {"mode": "raw", "raw": "{\"fio\": \"Петрова Анна Сергеевна\"}"},
-						"url": "{{base_url}}/users/{{user_id}}",
-						"description": "Overwrites the full name, the previous value is not kept. Returns 204 with an empty body."
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Overwrites the full name, the previous value is not kept. The success answer is 204 with an EMPTY body.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\"fio\": \"Петрова Анна Сергеевна\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"response": [
+							{
+								"name": "204 No Content",
+								"originalRequest": {
+									"method": "PATCH",
+									"url": {
+										"raw": "{{base_url}}/users/{{user_id}}",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"users",
+											"{{user_id}}"
+										]
+									},
+									"body": {
+										"mode": "raw",
+										"raw": "{\"fio\": \"Петрова Анна Сергеевна\"}",
+										"options": {
+											"raw": {
+												"language": "json"
+											}
+										}
+									},
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									]
+								},
+								"status": "No Content",
+								"code": 204,
+								"_postman_previewlanguage": "text",
+								"header": [
+									{
+										"key": "Content-Length",
+										"value": "0"
+									}
+								],
+								"cookie": [],
+								"body": ""
+							}
+						]
 					}
 				},
 				{
-					"name": "Patch user phone (SCD 3)",
+					"name": "Patch phone (SCD 3)",
 					"request": {
 						"method": "PATCH",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
-						"body": {"mode": "raw", "raw": "{\"phone\": \"+79111111111\"}"},
-						"url": "{{base_url}}/users/{{user_id}}",
-						"description": "Moves the current phone into phone_prev and sets the new one."
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Moves the current phone into phone_prev. The success answer is 204 with an EMPTY body.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\"phone\": \"+79111111111\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"response": [
+							{
+								"name": "204 No Content",
+								"originalRequest": {
+									"method": "PATCH",
+									"url": {
+										"raw": "{{base_url}}/users/{{user_id}}",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"users",
+											"{{user_id}}"
+										]
+									},
+									"body": {
+										"mode": "raw",
+										"raw": "{\"phone\": \"+79111111111\"}",
+										"options": {
+											"raw": {
+												"language": "json"
+											}
+										}
+									},
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									]
+								},
+								"status": "No Content",
+								"code": 204,
+								"_postman_previewlanguage": "text",
+								"header": [
+									{
+										"key": "Content-Length",
+										"value": "0"
+									}
+								],
+								"cookie": [],
+								"body": ""
+							},
+							{
+								"name": "404 Not Found",
+								"originalRequest": {
+									"method": "PATCH",
+									"url": {
+										"raw": "{{base_url}}/users/999999999",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"users",
+											"999999999"
+										]
+									},
+									"body": {
+										"mode": "raw",
+										"raw": "{\"phone\": \"+79111111111\"}",
+										"options": {
+											"raw": {
+												"language": "json"
+											}
+										}
+									},
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									]
+								},
+								"status": "Not Found",
+								"code": 404,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"Not found\"\n}"
+							}
+						]
 					}
 				},
 				{
-					"name": "Patch user without fields",
+					"name": "Patch without fields",
 					"request": {
 						"method": "PATCH",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
-						"body": {"mode": "raw", "raw": "{}"},
-						"url": "{{base_url}}/users/{{user_id}}",
-						"description": "Returns 400: at least one field is required."
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "At least one field is required.",
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"response": [
+							{
+								"name": "400 Bad Request",
+								"originalRequest": {
+									"method": "PATCH",
+									"url": {
+										"raw": "{{base_url}}/users/{{user_id}}",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"users",
+											"{{user_id}}"
+										]
+									},
+									"body": {
+										"mode": "raw",
+										"raw": "{}",
+										"options": {
+											"raw": {
+												"language": "json"
+											}
+										}
+									},
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									]
+								},
+								"status": "Bad Request",
+								"code": 400,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"at least one field is required\"\n}"
+							}
+						]
 					}
 				}
 			]
@@ -78,14 +433,74 @@
 					"name": "Get realty",
 					"request": {
 						"method": "GET",
-						"url": "{{base_url}}/realty/{{realty_id}}"
-					}
-				},
-				{
-					"name": "Get missing realty",
-					"request": {
-						"method": "GET",
-						"url": "{{base_url}}/realty/999999999"
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/realty/{{realty_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realty",
+								"{{realty_id}}"
+							]
+						},
+						"description": null,
+						"response": [
+							{
+								"name": "200 OK",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/realty/{{realty_id}}",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"{{realty_id}}"
+										]
+									}
+								},
+								"status": "OK",
+								"code": 200,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"id\": 1,\n    \"address\": \"г. Санкт-Петербург, улица Загородная, дом 1, кв. 1\",\n    \"square\": 30,\n    \"type\": \"flat\",\n    \"number\": \"1\",\n    \"rooms\": 1,\n    \"floor\": 1,\n    \"porch\": 1\n}"
+							},
+							{
+								"name": "404 Not Found",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/realty/999999999",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"999999999"
+										]
+									}
+								},
+								"status": "Not Found",
+								"code": 404,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"Not found\"\n}"
+							}
+						]
 					}
 				}
 			]
@@ -97,34 +512,228 @@
 					"name": "Post reading",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
-						"body": {"mode": "raw", "raw": "{\"user_id\": {{user_id}}, \"gauge_id\": {{gauge_id}}, \"tariff_id\": {{tariff_id}}, \"reading_date\": \"2026-10-01\", \"day_kw\": 1250, \"night_kw\": 300}"},
-						"url": "{{base_url}}/realty/{{realty_id}}/readings",
-						"description": "Returns 201 with an empty body. A repeated post for the same date is a correction: a new row with a later created_at wins, the old row stays."
-					}
-				},
-				{
-					"name": "Post reading for missing realty",
-					"request": {
-						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
-						"body": {"mode": "raw", "raw": "{\"user_id\": 1, \"gauge_id\": 1, \"tariff_id\": 1, \"reading_date\": \"2026-10-01\", \"day_kw\": 1250, \"night_kw\": 300}"},
-						"url": "{{base_url}}/realty/999999999/readings"
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/realty/{{realty_id}}/readings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realty",
+								"{{realty_id}}",
+								"readings"
+							]
+						},
+						"description": "A repeated post for the same date is a correction: a new row with a later created_at wins, the old row stays. The success answer is 201 with an EMPTY body.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\"user_id\": {{user_id}}, \"gauge_id\": {{gauge_id}}, \"tariff_id\": {{tariff_id}}, \"reading_date\": \"2026-10-01\", \"day_kw\": 1250, \"night_kw\": 300}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"response": [
+							{
+								"name": "201 Created",
+								"originalRequest": {
+									"method": "POST",
+									"url": {
+										"raw": "{{base_url}}/realty/{{realty_id}}/readings",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"{{realty_id}}",
+											"readings"
+										]
+									},
+									"body": {
+										"mode": "raw",
+										"raw": "{\"user_id\": 1, \"gauge_id\": 1, \"tariff_id\": 1, \"reading_date\": \"2026-10-01\", \"day_kw\": 1250, \"night_kw\": 300}",
+										"options": {
+											"raw": {
+												"language": "json"
+											}
+										}
+									},
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									]
+								},
+								"status": "Created",
+								"code": 201,
+								"_postman_previewlanguage": "text",
+								"header": [
+									{
+										"key": "Content-Length",
+										"value": "0"
+									}
+								],
+								"cookie": [],
+								"body": ""
+							},
+							{
+								"name": "404 Not Found",
+								"originalRequest": {
+									"method": "POST",
+									"url": {
+										"raw": "{{base_url}}/realty/999999999/readings",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"999999999",
+											"readings"
+										]
+									},
+									"body": {
+										"mode": "raw",
+										"raw": "{\"user_id\": 1, \"gauge_id\": 1, \"tariff_id\": 1, \"reading_date\": \"2026-10-01\", \"day_kw\": 1250, \"night_kw\": 300}",
+										"options": {
+											"raw": {
+												"language": "json"
+											}
+										}
+									},
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									]
+								},
+								"status": "Not Found",
+								"code": 404,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"Not found\"\n}"
+							}
+						]
 					}
 				},
 				{
 					"name": "List readings for period",
 					"request": {
 						"method": "GET",
-						"url": "{{base_url}}/realty/{{realty_id}}/readings?date_from=2026-10-01&date_to=2026-10-31",
-						"description": "Inclusive bounds. One actual value per date with corrections applied."
-					}
-				},
-				{
-					"name": "List readings with invalid date",
-					"request": {
-						"method": "GET",
-						"url": "{{base_url}}/realty/{{realty_id}}/readings?date_from=not-a-date&date_to=2026-10-31"
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/realty/{{realty_id}}/readings?date_from=2026-10-01&date_to=2026-10-31",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realty",
+								"{{realty_id}}",
+								"readings"
+							],
+							"query": [
+								{
+									"key": "date_from",
+									"value": "2026-10-01"
+								},
+								{
+									"key": "date_to",
+									"value": "2026-10-31"
+								}
+							]
+						},
+						"description": "Inclusive bounds, one actual value per date with corrections applied.",
+						"response": [
+							{
+								"name": "200 OK",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/realty/{{realty_id}}/readings?date_from=2026-10-01&date_to=2026-10-31",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"{{realty_id}}",
+											"readings"
+										],
+										"query": [
+											{
+												"key": "date_from",
+												"value": "2026-10-01"
+											},
+											{
+												"key": "date_to",
+												"value": "2026-10-31"
+											}
+										]
+									}
+								},
+								"status": "OK",
+								"code": 200,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"readings\": [\n        {\n            \"reading_date\": \"2026-10-01\",\n            \"user_id\": 1,\n            \"tariff_id\": 1,\n            \"gauge_id\": 1,\n            \"day_kw\": 8509,\n            \"night_kw\": 4059\n        }\n    ],\n    \"count\": 31\n}"
+							},
+							{
+								"name": "400 Bad Request",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/realty/{{realty_id}}/readings?date_from=not-a-date&date_to=2026-10-31",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"{{realty_id}}",
+											"readings"
+										],
+										"query": [
+											{
+												"key": "date_from",
+												"value": "not-a-date"
+											},
+											{
+												"key": "date_to",
+												"value": "2026-10-31"
+											}
+										]
+									}
+								},
+								"status": "Bad Request",
+								"code": 400,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"invalid \\\"date_from\\\" parameter\"\n}"
+							}
+						]
 					}
 				}
 			]
@@ -136,15 +745,138 @@
 					"name": "List invoices",
 					"request": {
 						"method": "GET",
-						"url": "{{base_url}}/realty/{{realty_id}}/invoices?limit=10&offset=0",
-						"description": "Sorted by created_at descending. count is the total number of invoices of the object."
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/realty/{{realty_id}}/invoices?limit=10&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realty",
+								"{{realty_id}}",
+								"invoices"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Sorted by created_at descending. count is the total number of invoices of the object.",
+						"response": [
+							{
+								"name": "200 OK",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/realty/{{realty_id}}/invoices?limit=10&offset=0",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"{{realty_id}}",
+											"invoices"
+										],
+										"query": [
+											{
+												"key": "limit",
+												"value": "10"
+											},
+											{
+												"key": "offset",
+												"value": "0"
+											}
+										]
+									}
+								},
+								"status": "OK",
+								"code": 200,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"invoices\": [\n        {\n            \"tariff_id\": 1,\n            \"gauge_id\": 1,\n            \"day_kw\": 222,\n            \"night_kw\": 107,\n            \"price\": 170810,\n            \"deadline\": \"2026-11-10\",\n            \"created_at\": \"2026-10-27 10:00:00\"\n        }\n    ],\n    \"count\": 36\n}"
+							}
+						]
 					}
 				},
 				{
 					"name": "List invoices negative limit",
 					"request": {
 						"method": "GET",
-						"url": "{{base_url}}/realty/{{realty_id}}/invoices?limit=-1&offset=0"
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/realty/{{realty_id}}/invoices?limit=-1&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realty",
+								"{{realty_id}}",
+								"invoices"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "-1"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						},
+						"description": "A negative or non-numeric limit or offset answers 400 with a JSON message.",
+						"response": [
+							{
+								"name": "400 Bad Request",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/realty/{{realty_id}}/invoices?limit=-1&offset=0",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"{{realty_id}}",
+											"invoices"
+										],
+										"query": [
+											{
+												"key": "limit",
+												"value": "-1"
+											},
+											{
+												"key": "offset",
+												"value": "0"
+											}
+										]
+									}
+								},
+								"status": "Bad Request",
+								"code": 400,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"invalid \\\"limit\\\" parameter\"\n}"
+							}
+						]
 					}
 				}
 			]
@@ -156,22 +888,115 @@
 					"name": "Tariff on date",
 					"request": {
 						"method": "GET",
-						"url": "{{base_url}}/tariffs?date=2026-10-27",
-						"description": "Returns the version in force on the date: valid_from <= date < valid_to."
-					}
-				},
-				{
-					"name": "Tariff without date",
-					"request": {
-						"method": "GET",
-						"url": "{{base_url}}/tariffs"
-					}
-				},
-				{
-					"name": "Tariff before every version",
-					"request": {
-						"method": "GET",
-						"url": "{{base_url}}/tariffs?date=1900-01-01"
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tariffs?date=2026-10-27",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tariffs"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2026-10-27"
+								}
+							]
+						},
+						"description": "Returns the version in force on the date: valid_from <= date < valid_to.",
+						"response": [
+							{
+								"name": "200 OK",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/tariffs?date=2026-10-27",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"tariffs"
+										],
+										"query": [
+											{
+												"key": "date",
+												"value": "2026-10-27"
+											}
+										]
+									}
+								},
+								"status": "OK",
+								"code": 200,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"id\": 1,\n    \"name\": \"День-Ночь\",\n    \"price_day_kwph\": 620,\n    \"price_night_kwph\": 310,\n    \"valid_from\": \"2023-11-01 00:00:00\",\n    \"valid_to\": \"2026-11-01 00:00:00\"\n}"
+							},
+							{
+								"name": "400 Bad Request",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/tariffs",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"tariffs"
+										]
+									}
+								},
+								"status": "Bad Request",
+								"code": 400,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"invalid \\\"date\\\" parameter\"\n}"
+							},
+							{
+								"name": "404 Not Found",
+								"originalRequest": {
+									"method": "GET",
+									"url": {
+										"raw": "{{base_url}}/tariffs?date=1900-01-01",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"tariffs"
+										],
+										"query": [
+											{
+												"key": "date",
+												"value": "1900-01-01"
+											}
+										]
+									}
+								},
+								"status": "Not Found",
+								"code": 404,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"Not found\"\n}"
+							}
+						]
 					}
 				}
 			]
@@ -183,19 +1008,164 @@
 					"name": "Install gauge",
 					"request": {
 						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
-						"body": {"mode": "raw", "raw": "{\"gauge_id\": {{new_gauge_id}}}"},
-						"url": "{{base_url}}/realty/{{realty_id}}/gauges",
-						"description": "Cancels the active binding (sign = -1, same version) and installs the gauge with version + 1. Returns 201 with an empty body."
-					}
-				},
-				{
-					"name": "Install gauge without id",
-					"request": {
-						"method": "POST",
-						"header": [{"key": "Content-Type", "value": "application/json"}],
-						"body": {"mode": "raw", "raw": "{}"},
-						"url": "{{base_url}}/realty/{{realty_id}}/gauges"
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/realty/{{realty_id}}/gauges",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"realty",
+								"{{realty_id}}",
+								"gauges"
+							]
+						},
+						"description": "Cancels the active binding (sign = -1, same version) and installs the gauge with version + 1. The success answer is 201 with an EMPTY body.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\"gauge_id\": {{new_gauge_id}}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"response": [
+							{
+								"name": "201 Created",
+								"originalRequest": {
+									"method": "POST",
+									"url": {
+										"raw": "{{base_url}}/realty/{{realty_id}}/gauges",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"{{realty_id}}",
+											"gauges"
+										]
+									},
+									"body": {
+										"mode": "raw",
+										"raw": "{\"gauge_id\": 2}",
+										"options": {
+											"raw": {
+												"language": "json"
+											}
+										}
+									},
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									]
+								},
+								"status": "Created",
+								"code": 201,
+								"_postman_previewlanguage": "text",
+								"header": [
+									{
+										"key": "Content-Length",
+										"value": "0"
+									}
+								],
+								"cookie": [],
+								"body": ""
+							},
+							{
+								"name": "400 Bad Request",
+								"originalRequest": {
+									"method": "POST",
+									"url": {
+										"raw": "{{base_url}}/realty/{{realty_id}}/gauges",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"{{realty_id}}",
+											"gauges"
+										]
+									},
+									"body": {
+										"mode": "raw",
+										"raw": "{}",
+										"options": {
+											"raw": {
+												"language": "json"
+											}
+										}
+									},
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									]
+								},
+								"status": "Bad Request",
+								"code": 400,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"invalid \\\"gauge_id\\\" field\"\n}"
+							},
+							{
+								"name": "404 Not Found",
+								"originalRequest": {
+									"method": "POST",
+									"url": {
+										"raw": "{{base_url}}/realty/999999999/gauges",
+										"host": [
+											"{{base_url}}"
+										],
+										"path": [
+											"realty",
+											"999999999",
+											"gauges"
+										]
+									},
+									"body": {
+										"mode": "raw",
+										"raw": "{\"gauge_id\": 2}",
+										"options": {
+											"raw": {
+												"language": "json"
+											}
+										}
+									},
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									]
+								},
+								"status": "Not Found",
+								"code": 404,
+								"_postman_previewlanguage": "json",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"cookie": [],
+								"body": "{\n    \"message\": \"Not found\"\n}"
+							}
+						]
 					}
 				}
 			]
