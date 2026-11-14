@@ -1,11 +1,30 @@
 import os
 from dataclasses import dataclass
 from datetime import date, datetime, time
+from pathlib import Path
 
 DATE_FORMAT = "%Y-%m-%d"
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 TIME_FORMAT = "%H:%M:%S"
 OUTPUT_DIR = "data"
+ENV_FILE = Path(__file__).resolve().parent.parent / ".env.local"
+
+
+def _unquote(value: str) -> str:
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+        return value[1:-1]
+    return value
+
+
+def load_env_file(path: Path = ENV_FILE) -> None:
+    if not path.exists():
+        return
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), _unquote(value.strip()))
 
 
 class ConfigError(ValueError):
@@ -91,6 +110,7 @@ class DatasetConfig:
 
     @staticmethod
     def from_env() -> "DatasetConfig":
+        load_env_file()
         config = DatasetConfig(
             seed=_integer("DATASET_SEED"),
             realty_count=_integer("DATASET_REALTY_COUNT"),
