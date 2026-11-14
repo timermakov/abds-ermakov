@@ -10,7 +10,7 @@ Backend-сервис вымышленной ЖКХ-компании «Энерг
 
 Нужен установленный Docker с Docker Compose и Python 3 в PATH
 (`python3`, на Windows достаточно установленного Python). Команды `make`
-работают одинаково из PowerShell, cmd и Git Bash, а генератор и скрипты сами читают `.env.local`.
+работают одинаково из Windows (PowerShell, cmd) / Linux (Bash), а генератор и скрипты сами читают `.env.local`.
 
 | Команда | Что делает |
 | --- | --- |
@@ -29,7 +29,7 @@ Backend-сервис вымышленной ЖКХ-компании «Энерг
 ```bash
 make run
 make setup
-curl http://localhost:8080/ping
+curl -i http://localhost:8080/ping
 make teardown
 make stop
 ```
