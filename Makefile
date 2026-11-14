@@ -1,6 +1,7 @@
 .DEFAULT_GOAL = run
 
 COMPOSE = docker compose --env-file .env.local
+PYTHON = python3
 
 .PHONY: run rund services stop clean gen load setup teardown
 
@@ -20,14 +21,14 @@ clean:
 	$(COMPOSE) down -v
 
 gen:
-	set -a && . ./.env.local && set +a && python3 -m gen.main
+	$(PYTHON) -m gen.main
 
 load:
-	bash scripts/load.sh
+	$(PYTHON) scripts/load.py
 
 setup: gen
-	bash scripts/schema.sh
-	bash scripts/load.sh
+	$(PYTHON) scripts/schema.py
+	$(PYTHON) scripts/load.py
 
 teardown:
-	bash scripts/teardown.sh
+	$(PYTHON) scripts/teardown.py

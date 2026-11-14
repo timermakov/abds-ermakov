@@ -8,13 +8,15 @@ Backend-сервис вымышленной ЖКХ-компании «Энерг
 
 ## Запуск
 
-Нужен установленный Docker с Docker Compose.
+Нужен установленный Docker с Docker Compose и Python 3 в PATH
+(`python3`, на Windows достаточно установленного Python). Команды `make`
+работают одинаково из PowerShell, cmd и Git Bash, а генератор и скрипты сами читают `.env.local`.
 
 | Команда | Что делает |
 | --- | --- |
 | `make run` | Поднимает ClickHouse и приложение через `docker compose` |
 | `make stop` | Останавливает контейнеры |
-| `make gen` | Генерирует датасеты в `data/` (Python, без зависимостей) |
+| `make gen` | Генерирует датасеты в `data/` (Python stdlib, без зависимостей) |
 | `make load` | Загружает датасеты из `data/` в ClickHouse |
 | `make setup` | Создаёт схему, генерирует и загружает данные. Требует запущенного ClickHouse |
 | `make teardown` | Удаляет таблицы и данные, база возвращается в исходное состояние |
@@ -72,7 +74,7 @@ internal/handler/    обработчики по сущностям (users, real
 internal/repo/       запросы к ClickHouse по сущностям
 gen/                 генератор датасетов и его тесты (unittest)
 schema/001_tables.sql  DDL всех таблиц
-scripts/             schema.sh, load.sh, teardown.sh
+scripts/             schema.py, load.py, teardown.py — запуск через python, без шелл-скриптов
 api/                 Postman-коллекция
 ```
 
