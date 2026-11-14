@@ -20,8 +20,8 @@ services:
       test: ["CMD-SHELL", "clickhouse-client --user \"$CLICKHOUSE_USER\" --password \"$CLICKHOUSE_PASSWORD\" --query 'SELECT 1'"]
       interval: 5s
       timeout: 3s
-      retries: 10
-      start_period: 5s
+      retries: 24
+      start_period: 30s
 
   app:
     build:
