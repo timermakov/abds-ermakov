@@ -44,6 +44,12 @@ logs/
 docker-compose.override.yml
 
 # ============================================
+# Project runtime data
+# ============================================
+data/
+volume/
+
+# ============================================
 # Harness
 # ============================================
 .clade/
@@ -65,7 +71,7 @@ docker-compose.override.yml
 *.out
 go.work
 go.work.sum
-vendor/
+# vendor/ - НЕ игнорируем! Dockerfile собирает приложение с -mod=vendor
 
 # Java
 *.class
@@ -95,6 +101,5 @@ yarn-error.log*
 .eslintcache
 
 # PHP
-vendor/
 composer.phar
 composer.lock
