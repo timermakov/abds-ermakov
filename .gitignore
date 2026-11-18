@@ -71,6 +71,7 @@ volume/
 *.out
 go.work
 go.work.sum
+# vendor/ - НЕ игнорируем! Dockerfile собирает приложение с -mod=vendor
 
 # Java
 *.class
@@ -100,6 +101,5 @@ yarn-error.log*
 .eslintcache
 
 # PHP
-vendor/
 composer.phar
 composer.lock
