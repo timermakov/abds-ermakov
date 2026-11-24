@@ -24,9 +24,9 @@
 
 ### Добавлено
 
-- CI-воркфлоу `Energosbyt Labs` для автоматической проверки
-лабораторных работ (`.github/workflows/energosbyt.lab.yml`)
-и скрипт определения номера лабораторной работы из `.labrc` [.github/scripts/lab_number.sh](.github/scripts/lab_number.sh)
+- CI-воркфлоу `Energosbyt Labs` для автоматической проверки лабораторных работ
+(`.github/workflows/energosbyt.lab.yml`) и скрипт
+[определения номера лабораторной работы из `.labrc`](.github/scripts/lab_number.sh)
 - Файл `.gitignore`
 - Файл `.labrc` с номером проверяемой лабораторной работы
 - Файл `.env.local` с переменными окружения для Docker Compose
