@@ -287,6 +287,28 @@ func TestListHandlerInvalidParams(t *testing.T) {
 	}
 }
 
+func TestListHandlerInvertedRange(t *testing.T) {
+	lister := &fakeLister{}
+	handler := NewListHandler(lister, &fakeExists{found: true})
+	recorder := httptest.NewRecorder()
+	handler.ServeHTTP(recorder, newRequest(http.MethodGet, "/realty/1/readings?date_from=2026-10-31&date_to=2026-10-01", "", "1"))
+	if recorder.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d", recorder.Code)
+	}
+	if lister.calls != 0 {
+		t.Errorf("lister calls = %d", lister.calls)
+	}
+	var got struct {
+		Message string `json:"message"`
+	}
+	if err := json.Unmarshal(recorder.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if got.Message != `"date_from" must not be after "date_to"` {
+		t.Errorf("message = %q", got.Message)
+	}
+}
+
 func TestListHandlerUnknownRealty(t *testing.T) {
 	handler := NewListHandler(&fakeLister{}, &fakeExists{found: false})
 	recorder := httptest.NewRecorder()

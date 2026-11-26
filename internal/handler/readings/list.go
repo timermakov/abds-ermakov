@@ -47,6 +47,10 @@ func (h ListHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		httpx.InvalidParameter(w, "date_to")
 		return
 	}
+	if from.After(to) {
+		httpx.Error(w, http.StatusBadRequest, `"date_from" must not be after "date_to"`)
+		return
+	}
 	exists, err := h.realties.Exists(r.Context(), realtyID)
 	if err != nil {
 		httpx.Error(w, http.StatusInternalServerError, "internal error")
