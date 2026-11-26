@@ -71,7 +71,8 @@ volume/
 *.out
 go.work
 go.work.sum
-# vendor/ - НЕ игнорируем! Dockerfile собирает приложение с -mod=vendor
+# Зависимости не коммитим: Dockerfile ставит их при сборке (go mod download)
+vendor/
 
 # Java
 *.class

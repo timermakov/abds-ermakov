@@ -3,10 +3,10 @@ FROM golang:1.27.1-alpine AS build
 WORKDIR /src
 
 COPY go.mod go.sum ./
-COPY vendor ./vendor
+RUN go mod download
 COPY cmd ./cmd
 COPY internal ./internal
-RUN CGO_ENABLED=0 go build -mod=vendor -o /bin/server ./cmd/server
+RUN CGO_ENABLED=0 go build -o /bin/server ./cmd/server
 
 FROM scratch
 

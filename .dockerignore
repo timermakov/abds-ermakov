@@ -6,6 +6,7 @@ gen
 scripts
 schema
 volume
+vendor
 .env.local
 .gitattributes
 .gitignore
