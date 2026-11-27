@@ -1,48 +1,156 @@
-# Лабораторный проект
+# Лабораторный проект. ЭнергоСбыт
 
-[![labs](https://github.com/{your_username}/{your_repo}/actions/workflows/energosbyt.energosbyt.lab.yml/badge.svg)](https://github.com/{your_username}/{your_repo}/actions/workflows/energosbyt.energosbyt.lab.yml)
+[![Labs](https://github.com/timermakov/abds-ermakov/actions/workflows/energosbyt.lab.yml/badge.svg)](https://github.com/timermakov/abds-ermakov/actions/workflows/energosbyt.lab.yml)
 
-Backend-сервис вымышленной ЖКХ-компании для практики по курсу «Архитектура систем обработки больших данных».
+Backend-сервис вымышленной ЖКХ-компании «ЭнергоСбыт» для курса
+«Архитектура систем обработки больших данных».
+Лабораторная работа №1: SCD 1/2/3 в ClickHouse и HTTP-сервис приёма показаний.
 
-## С чего начать
+## Запуск
 
-1. **‼️ Настройте репозиторий** — проведите обязательную настройку контрибьюторов и защиты ветки (см. ниже)
-2. **[Лабораторные работы](https://github.com/sitnikovik/abds/tree/master/lab)** — технические задания для каждой лабораторной работы
-3. **[CONTRIBUTING.md](CONTRIBUTING.md)** — требования к структуре проекта, процесс разработки и проверки
-4. **[Документация курса](https://github.com/sitnikovik/abds)** — методические материалы и дополнительные ресурсы
+Нужен установленный Docker с Docker Compose и Python 3 в PATH
+(`python3`, на Windows достаточно установленного Python). Команды `make`
+работают одинаково из Windows (PowerShell, cmd) / Linux (Bash), а генератор и скрипты сами читают `.env.local`.
 
-> [!IMPORTANT]
-> Поменяйте `{your_username}` и `{your_repo}` в badge на ваши имя пользователя и название репозитория.
+| Команда | Что делает |
+| --- | --- |
+| `make run` | Поднимает ClickHouse и приложение через `docker compose` |
+| `make stop` | Останавливает контейнеры |
+| `make gen` | Генерирует датасеты в `data/` (Python stdlib, без зависимостей) |
+| `make load` | Загружает датасеты из `data/` в ClickHouse |
+| `make setup` | Создаёт схему, генерирует и загружает данные. Требует запущенного ClickHouse |
+| `make teardown` | Удаляет таблицы и данные, база возвращается в исходное состояние |
+| `make services` | Показывает статус сервисов |
+| `make rund` | Запускает сервисы без detached-режима (для отладки) |
+| `make clean` | Останавливает контейнеры и удаляет volumes |
+
+Типичный порядок работы:
+
+```bash
+make run
+make setup
+curl -i http://localhost:8080/ping
+make teardown
+make stop
+```
+
+После `make run` ClickHouse доступен на порту `8123`:
+
+```bash
+curl http://localhost:8123/ping
+```
+
+## Конфигурация
+
+Вся конфигурация живёт в одном файле — `.env.local`. Его читают Docker Compose,
+приложение, генератор и автогрейдер, поэтому проект поднимается и проверяется
+«как есть», без правок кода. Захардкоженных значений в коде и compose нет.
+
+| Переменная | Назначение |
+| --- | --- |
+| `APP_PORT` | Порт HTTP-сервиса |
+| `APP_CLICKHOUSE_RETRIES` | Попыток подключения приложения к ClickHouse при старте |
+| `APP_CLICKHOUSE_RETRY_DELAY_SEC` | Пауза между попытками |
+| `APP_CLICKHOUSE_PING_TIMEOUT_SEC` | Таймаут проверки подключения |
+| `CLICKHOUSE_HOST` | Адрес ClickHouse с хоста (в контейнере приложения переопределяется на имя сервиса `clickhouse`) |
+| `CLICKHOUSE_PORT` | Нативный порт ClickHouse |
+| `CLICKHOUSE_HTTP_PORT` | HTTP-порт ClickHouse |
+| `CLICKHOUSE_USER`, `CLICKHOUSE_PASSWORD` | Учётные данные ClickHouse |
+| `CLICKHOUSE_DATABASE` | База данных проекта |
+| `CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT` | Открывает сетевой доступ пользователю `default` |
+| `DATASET_*` | Параметры генератора: объёмы, период, доли корректировок и замен, даты и цены версий тарифа, seed |
+
+## Архитектура
+
+- **HTTP-сервис** — Go 1.26, `net/http` (метод+wildcard маршруты) и `clickhouse-go/v2`.
+- **Генератор датасетов** — Python 3 stdlib (`gen/`), пишет CSV потоково в `data/`.
+- **Загрузка** — `clickhouse-client` внутри контейнера, `INSERT ... FORMAT CSVWithNames`.
+- **ClickHouse 26.7** — один инстанс, данные в локальной папке `volume/` (не коммитится).
+
+```text
+cmd/server/          точка входа HTTP-сервиса
+internal/config/     чтение и валидация окружения
+internal/httpx/      ответы, ошибки {"message"}, middleware
+internal/model/      структуры предметной области
+internal/handler/    обработчики по сущностям (users, realty, readings, invoices, tariffs, gauges, ping)
+internal/repo/       запросы к ClickHouse по сущностям
+gen/                 генератор датасетов и его тесты (unittest)
+schema/001_tables.sql  DDL всех таблиц
+scripts/             schema.py, load.py, teardown.py — запуск через python, без шелл-скриптов
+api/                 Postman-коллекция
+```
+
+## HTTP API
+
+Тело запросов и ответов — JSON, поля в `snake_case`, даты `YYYY-MM-DD`, даты со временем `YYYY-MM-DD HH:MM:SS`, ошибки — `{"message": "..."}`. Коллекция Postman с примерами — в [api/energosbyt.postman_collection.json](api/energosbyt.postman_collection.json).
+
+| Метод и путь | Назначение | Успех | Ошибки |
+| --- | --- | --- | --- |
+| `GET /ping` | Проверка доступности | `200`, пустое тело | — |
+| `GET /users/{id}` | Собственник | `200` | `404` |
+| `PATCH /users/{id}` | `fio` (SCD 1), `phone` (SCD 3) | `204`, пустое тело | `400`, `404` |
+| `GET /realty/{id}` | Объект недвижимости | `200` | `404` |
+| `POST /realty/{id}/readings` | Передача показания, повтор за дату — корректировка | `201`, пустое тело | `400`, `404` |
+| `GET /realty/{id}/readings?date_from&date_to` | Показания за период, одно актуальное значение за дату | `200` | `400`, `404` |
+| `GET /realty/{id}/invoices?limit&offset` | Счета объекта, сортировка по `created_at` по убыванию | `200` | `400`, `404` |
+| `GET /tariffs?date=` | Версия тарифа на дату: `valid_from <= date < valid_to` | `200` | `400`, `404` |
+| `POST /realty/{id}/gauges` | Установка счётчика с аннулированием активной привязки | `201`, пустое тело | `400`, `404` |
+
+## Схема данных
+
+База `energosbyt`, DDL — в [schema/001_tables.sql](schema/001_tables.sql).
+
+| Таблица | Движок | Ключ сортировки | Партиции | Обоснование |
+| --- | --- | --- | --- | --- |
+| `dim_realty` | `MergeTree` | `id` | нет | Малый справочник, поиск только по `id` |
+| `dim_gauges` | `MergeTree` | `id` | нет | Малый справочник, поиск только по `id` |
+| `dim_tariffs` | `ReplacingMergeTree(updated_at)` | `(id, valid_from)` | нет | `valid_from` в ключе: две версии одного тарифа не схлопываются при `FINAL` и остаются историей SCD 2 |
+| `dim_users` | `ReplacingMergeTree(updated_at)` | `id` | нет | SCD 1/3 заменяет строку собственника целиком, `FINAL` отдаёт последнюю версию |
+| `fact_gauge_bindings` | `VersionedCollapsingMergeTree(sign, version)` | `(realty_id, gauge_id)` | нет | Аннулирование (`sign = -1`, тот же `version`) схлопывается с установкой; `created_at` не входит в ключ, иначе пары не схлопнутся |
+| `fact_meter_readings` | `ReplacingMergeTree(created_at)` | `(realty_id, reading_date)` | `toYYYYMM(reading_date)` | Корректировка побеждает по `created_at` внутри ключа «объект + дата»; партиции режут периоды в `GET /readings` |
+| `fact_invoice` | `MergeTree` | `(realty_id, created_at)` | `toYYYYMM(created_at)` | Ключ совпадает с порядком выдачи (`ORDER BY created_at DESC` внутри объекта) и пагинацией |
+
+## SCD-сценарии
+
+Ссылка:
+[Сценарии SCD](docs/scd-scenarios.md).
+
+## Идемпотентность загрузки
+
+`make setup` можно запускать сколько угодно раз подряд: он каждый раз пересоздаёт
+схему с нуля (`DROP DATABASE` → `CREATE DATABASE` → таблицы), так что дубли
+не накапливаются.
+
+Если повторить только `make load`, картина разная. В `dim_tariffs`, `dim_users`
+и `fact_meter_readings` дублей не будет: те же строки дают те же ключи и версии,
+и `ReplacingMergeTree` схлопывает повторы при `FINAL`. А вот `dim_realty`,
+`dim_gauges`, `fact_invoice` (обычный `MergeTree`) и `fact_gauge_bindings`
+(`VersionedCollapsingMergeTree`) задублируются физически — поэтому между
+повторными загрузками лучше сначала сделать `make teardown`.
+
+## Датасеты
+
+Генератор: `make gen`, детерминированный по `DATASET_SEED`, пишет CSV в `data/`
+(`data/` и `volume/` в `.gitignore`). Параметры генерации — в `.env.local`.
+
+| Таблица | Строк | Состав |
+| --- | --- | --- |
+| `dim_realty` | 1 000 | Квартиры и нежилые помещения, 10 домов |
+| `dim_gauges` | 1 099 | Счётчик на каждый объект, 99 объектов с заменой |
+| `dim_tariffs` | 2 | Две версии тарифа: `2023-11-01 → 2026-11-01` и `2026-11-01 → 2099-01-01` |
+| `dim_users` | 1 000 | Собственник на каждый объект |
+| `fact_gauge_bindings` | 1 198 | Установка на каждый объект, 99 аннулирований и повторных установок |
+| `fact_meter_readings` | ~1 129 000 | Показание на каждый объект за каждый день `2023-11-01 … 2026-10-31`, ~3% корректировок за ту же дату |
+| `fact_invoice` | 36 000 | Счёт за каждый месяц периода, `deadline` — 10-е число следующего месяца |
+
+## Проверка решения
+
+1. `git push` ветки и Pull Request в свой репозиторий (`feature/lab-1` → `main`).
+2. GitHub Actions запускает проверку лабы автоматически (`.labrc` указывает номер работы).
+3. Ревьюер назначается автоматически; после исправления замечаний пуш в ту же ветку перезапускает пайплайн.
 
 ## Настройка репозитория
 
-### Защита основной ветки
-
-После создания репозитория из шаблона **обязательно настройте правила защиты для ветки `main`**:
-
-1. Откройте **Settings** → **Branches** → **Add classic branch protection rule**
-2. В поле **Branch name pattern** укажите: `main`
-3. Включите следующие опции:
-   - **Require a pull request before merging**
-     - Require approvals: **1**: требует минимум одного одобрения перед слиянием
-   - ***Require status checks to pass before merging***
-     - Выберите *"autograder"*: проверит все лабораторные работы автоматически
-     - ***Require branches to be up to date before merging*** (рекомендуется):
-     требует, чтобы ветка PR была синхронизирована с последними изменениями из основной ветки перед слиянием
-   - ***Do not allow bypassing the above settings***: запрещает обход настроек защиты ветки
-4. Нажмите **Create** или **Save changes**
-
-> ⚠️ **Важно:** Без этих настроек автоматические проверки не будут блокировать PR с ошибками.
-
-### Добавление коллабораторов
-
-Чтобы преподаватели могли проводить код-ревью:
-
-1. Откройте **Settings** → **Collaborators**
-2. Нажмите **Add people**
-3. Добавьте всех кто есть в списке ревьюеров в файле [CODEOWNERS](CODEOWNERS)
-4. Выберите роль: **Write** (или выше), иначе ревьюер не сможет одобрить PR
-
-## Помощь
-
-Возникли вопросы? → [@sitnikovik](https://t.me/sitnikovik)
+Однократная настройка после создания репозитория из шаблона описана в
+[CONTRIBUTING.md](CONTRIBUTING.md): защита ветки `main`, статус-чек «autograder»
+и добавление коллабораторов из [CODEOWNERS](CODEOWNERS).
